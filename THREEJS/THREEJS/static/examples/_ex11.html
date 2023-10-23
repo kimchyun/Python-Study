@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>three.js webgl - geometry - cube</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+      <link type="text/css" rel="stylesheet" href="main.css">
+   </head>
+   <body>
+
+      <!-- Import maps polyfill -->
+      <!-- Remove this when import maps will be widely supported -->
+      <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+      <script type="importmap">
+         {
+            "imports": {
+               "three": "../build/three.module.js",
+               "three/addons/": "./jsm/"
+            }
+         }
+      </script>
+
+      <script type="module">
+
+         import * as THREE from 'three';
+
+         let camera, scene, renderer;
+         let mesh, meshS1, meshS2, meshS3, meshS4, groupD;
+
+         init();
+         animate();
+
+         function init() {
+
+            camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 100 );
+            camera.position.z = 10;
+            camera.position.y = 3;            
+
+            scene = new THREE.Scene();
+
+            const texture = new THREE.TextureLoader().load( 'textures/celeb/sg.png' );
+            texture.colorSpace = THREE.SRGBColorSpace;
+            const material = new THREE.MeshBasicMaterial( { map: texture } );
+
+            const geometry = new THREE.BoxGeometry(1, 0.5, 3);
+               
+            const geometryS1 = new THREE.CylinderGeometry( 0.5, 0.5, 0.1, 32 ); 
+            const materialS1 = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } ); 
+            
+            const geometryS2 = new THREE.CylinderGeometry( 0.5, 0.5, 0.1, 32 ); 
+            const materialS2 = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } ); 
+            
+            const geometryS3 = new THREE.CylinderGeometry( 0.5, 0.5, 0.1, 32 ); 
+            const materialS3 = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } ); 
+            
+            const geometryS4 = new THREE.CylinderGeometry( 0.5, 0.5, 0.1, 32 ); 
+            const materialS4 = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } ); 
+            
+               
+            mesh = new THREE.Mesh( geometry, material );
+            meshS1 = new THREE.Mesh( geometryS1, materialS1 );
+            meshS2 = new THREE.Mesh( geometryS2, materialS2 );
+            meshS3 = new THREE.Mesh( geometryS3, materialS3 );
+            meshS4 = new THREE.Mesh( geometryS4, materialS4 );
+            
+            meshS1.position.y = 0.3;
+            meshS1.position.x = 0.8;
+            meshS1.position.z = 1.5;
+            
+            meshS2.position.y = 0.3;
+            meshS2.position.x = -0.8;
+            meshS2.position.z = 1.5;
+            
+            meshS3.position.y = 0.3;
+            meshS3.position.x = 0.8;
+            meshS3.position.z = -1.5;
+            
+            meshS4.position.y = 0.3;
+            meshS4.position.x = -0.8;
+            meshS4.position.z = -1.5;
+            
+            groupD = new THREE.Group();
+            groupD.add( mesh );
+            groupD.add( meshS1 );
+            groupD.add( meshS2 );
+            groupD.add( meshS3 );
+            groupD.add( meshS4 );
+            
+            scene.add( groupD );
+                        
+            renderer = new THREE.WebGLRenderer( { antialias: true } );
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            //
+
+            window.addEventListener( 'resize', onWindowResize );
+
+         }
+
+         function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+         }
+         
+         function animate() {
+
+            requestAnimationFrame( animate );
+            
+            //groupD.rotation.z += 0.1;
+
+            meshS1.rotation.y += 0.1;
+            meshS2.rotation.y -= 0.1;
+            meshS3.rotation.y -= 0.1;
+            meshS4.rotation.y += 0.1;
+            
+            camera.lookAt(0,0,0);
+            
+            renderer.render( scene, camera );
+
+         }
+         
+                  function myMove(e){
+            if(e.key=="w"){
+               groupD.position.y += 0.01;
+            }
+            if(e.key=="s"){
+               groupD.position.y -= 0.01;
+            }
+            if(e.key=="a"){
+               groupD.rotation.y -= 0.01;
+            }
+            if(e.key=="d"){
+               groupD.rotation.y += 0.01;
+            }
+            if(e.key=="k"){
+               var t = groupD.rotation.y;
+               var r = 0.1;
+               var dc = r*Math.cos(t);
+               var ds = r*Math.sin(t);
+               groupD.position.z += dc;
+               groupD.position.x += ds;
+            }
+            if(e.key=="i"){
+               var t = groupD.rotation.y;
+               var r = 0.1;
+               var dc = r*Math.cos(t);
+               var ds = r*Math.sin(t);
+               groupD.position.z -= dc;
+               groupD.position.x -= ds;
+            }
+               if(e.key=="j"){
+               var t = groupD.rotation.y;
+               var r = 0.1;
+               var dc = r*Math.cos(t);
+               var ds = r*Math.sin(t);
+               groupD.position.z += ds;
+               groupD.position.x -= dc;
+            }
+               if(e.key=="l"){
+               var t = groupD.rotation.y;
+               var r = 0.1;
+               var dc = r*Math.cos(t);
+               var ds = r*Math.sin(t);
+               groupD.position.z -= ds;
+               groupD.position.x += dc;
+            }
+            console.log("groupD.rotation.y", groupD.rotation.y)
+         }
+         
+         window.addEventListener("keydown", (e) => myMove(e));
+
+      </script>
+   </body>
+</html>
